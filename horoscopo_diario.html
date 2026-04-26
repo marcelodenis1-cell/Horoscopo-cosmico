@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horóscopo Cósmico Diario</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --deep-space: #0a0e27;
+            --cosmic-purple: #1a0f2e;
+            --nebula-blue: #162447;
+            --star-gold: #f4d03f;
+            --mystic-violet: #9b59b6;
+            --celestial-cyan: #64b5f6;
+            --moon-silver: #c8d6e5;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: var(--deep-space);
+            color: var(--moon-silver);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 0 2rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--star-gold), var(--celestial-cyan), var(--mystic-violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--moon-silver);
+            opacity: 0.8;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        .date-display {
+            text-align: center;
+            font-size: 1.1rem;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(100, 181, 246, 0.2);
+            border-radius: 10px;
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .zodiac-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        .zodiac-card {
+            background: linear-gradient(135deg, rgba(26, 15, 46, 0.6), rgba(22, 36, 71, 0.4));
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .zodiac-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(100, 181, 246, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .zodiac-card:hover::before {
+            opacity: 1;
+        }
+
+        .zodiac-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            border-color: var(--celestial-cyan);
+            box-shadow: 0 10px 40px rgba(100, 181, 246, 0.3);
+        }
+
+        .zodiac-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 0 10px rgba(244, 208, 63, 0.5));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .zodiac-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--star-gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .zodiac-dates {
+            font-size: 0.85rem;
+            color: var(--moon-silver);
+            opacity: 0.7;
+            margin-top: 0.3rem;
+        }
+
+        .horoscope-display {
+            background: linear-gradient(135deg, rgba(26, 15, 46, 0.8), rgba(22, 36, 71, 0.6));
+            border: 2px solid var(--mystic-violet);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            min-height: 200px;
+            display: none;
+            animation: slideUp 0.6s ease-out;
+            box-shadow: 0 20px 60px rgba(155, 89, 182, 0.3);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .horoscope-display.active {
+            display: block;
+        }
+
+        .horoscope-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.3);
+        }
+
+        .horoscope-icon {
+            font-size: 3rem;
+            filter: drop-shadow(0 0 15px rgba(244, 208, 63, 0.6));
+        }
+
+        .horoscope-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--star-gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .horoscope-content {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--moon-silver);
+        }
+
+        .horoscope-content strong {
+            color: var(--star-gold);
+            font-family: 'Cinzel', serif;
+            font-size: 1.05em;
+            display: block;
+            margin-top: 1.2rem;
+            margin-bottom: 0.4rem;
+            letter-spacing: 1px;
+        }
+
+        .horoscope-content p {
+            margin-bottom: 0.8rem;
+        }
+
+        .shooting-star {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: white;
+            box-shadow: 0 0 10px 2px white;
+            animation: shoot 3s linear;
+            opacity: 0;
+        }
+
+        @keyframes shoot {
+            0% {
+                opacity: 1;
+                transform: translateX(0) translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-300px) translateY(300px);
+            }
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 0 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(100, 181, 246, 0.2);
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .zodiac-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 1rem;
+            }
+            
+            .horoscope-display {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="starfield"></div>
+
+    <div class="container">
+        <header>
+            <h1>✧ Horóscopo Cósmico ✧</h1>
+            <p class="subtitle">Revelaciones astrales para cada día</p>
+        </header>
+
+        <div class="date-display">
+            <span id="currentDate"></span>
+        </div>
+
+        <div class="zodiac-grid">
+            <div class="zodiac-card" onclick="getHoroscope('aries', '♈')">
+                <div class="zodiac-icon">♈</div>
+                <div class="zodiac-name">Aries</div>
+                <div class="zodiac-dates">21 Mar - 19 Abr</div>
+            </div>
+            <div class="zodiac-card" onclick="getHoroscope('tauro', '♉')">
+                <div class="zodiac-icon">♉</div>
+                <div class="zodiac-name">Tauro</div>
+                <div class="zodiac-dates">20 Abr - 20 May</div>
+            </div>
+            <div class="zodiac-card" onclick="getHoroscope('géminis', '♊')">
+                <div class="zodiac-icon">♊</div>
+                <div class="zodiac-name">Géminis</div>
+                <div class="zodiac-dates">21 May - 20 Jun</div>
+            </div>
+            <div class="zodiac-card" onclick="getHoroscope('cáncer', '♋')">
+                <div class="zodiac-icon">♋</div>
+                <div class="zodiac-name">Cáncer</div>
+                <div class="zodiac-dates">21 Jun - 22 Jul</div>
+            </div>
+            <div class="zodiac-card" onclick="getHoroscope('leo', '♌')">
+                <div class="zodiac-icon">♌</div>
+                <div class="zodiac-name">Leo</div>
+                <div class="zodiac-dates">23 Jul - 22 Ago</div>
+            </div>
+            <div class="zodiac-card" onclick="getHoroscope('virgo', '♍')">
+                <div class="zodiac-icon">♍</div>
+                <div class="zodiac-name">Virgo</div>
+                <div class="zodiac-dates">23 Ago - 22 Sep</div>
+            </div>
+            <div class="zodiac-card" onclick="getHoroscope('libra', '♎')">
+                <div class="zodiac-icon">♎</div>
+                <div class="zodiac-name">Libra</div>
+                <div class="zodiac-dates">23 Sep - 22 Oct</div>
+            </div>
+            <div class="zodiac-card" onclick="getHoroscope('escorpio', '♏')">
+                <div class="zodiac-icon">♏</div>
+                <div class="zodiac-name">Escorpio</div>
+                <div class="zodiac-dates">23 Oct - 21 Nov</div>
+            </div>
+            <div class="zodiac-card" onclick="getHoroscope('sagitario', '♐')">
+                <div class="zodiac-icon">♐</div>
+                <div class="zodiac-name">Sagitario</div>
+                <div class="zodiac-dates">22 Nov - 21 Dic</div>
+            </div>
+            <div class="zodiac-card" onclick="getHoroscope('capricornio', '♑')">
+                <div class="zodiac-icon">♑</div>
+                <div class="zodiac-name">Capricornio</div>
+                <div class="zodiac-dates">22 Dic - 19 Ene</div>
+            </div>
+            <div class="zodiac-card" onclick="getHoroscope('acuario', '♒')">
+                <div class="zodiac-icon">♒</div>
+                <div class="zodiac-name">Acuario</div>
+                <div class="zodiac-dates">20 Ene - 18 Feb</div>
+            </div>
+            <div class="zodiac-card" onclick="getHoroscope('piscis', '♓')">
+                <div class="zodiac-icon">♓</div>
+                <div class="zodiac-name">Piscis</div>
+                <div class="zodiac-dates">19 Feb - 20 Mar</div>
+            </div>
+        </div>
+
+        <div class="horoscope-display" id="horoscopeDisplay">
+            <div class="horoscope-header">
+                <div class="horoscope-icon" id="selectedIcon"></div>
+                <div class="horoscope-title" id="selectedSign"></div>
+            </div>
+            <div class="horoscope-content" id="horoscopeContent"></div>
+        </div>
+
+        <footer>
+            ✨ Las estrellas revelan sus secretos cada día ✨
+        </footer>
+    </div>
+
+    <script>
+        // Horoscopes database - 7 variations per sign (one for each day of week)
+        const horoscopes = {
+            aries: [
+                `<p><strong>Energía del Día</strong></p><p>Marte te impulsa con fuerza renovada. Hoy es ideal para tomar iniciativas audaces y comenzar proyectos que requieren valentía.</p><p><strong>Amor</strong></p><p>La pasión está en el aire. Un gesto espontáneo sorprenderá gratamente a tu pareja. Solteros: brillarán en encuentros casuales.</p><p><strong>Trabajo</strong></p><p>Tu creatividad alcanza un pico. Las ideas innovadoras fluyen naturalmente. Presentalas con confianza.</p><p><strong>Consejo Astral</strong></p><p>El fuego que te habita ilumina el camino. Usá esa energía para construir, no para destruir.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>El Sol amplifica tu visión. Verás oportunidades donde otros ven obstáculos. Mantené la mente abierta.</p><p><strong>Amor</strong></p><p>La comunicación honesta fortalece vínculos. Decí lo que sentís sin rodeos pero con tacto.</p><p><strong>Trabajo</strong></p><p>Proyectos antiguos muestran avances. Tu determinación impresiona a superiores. Buen momento para negociar.</p><p><strong>Consejo Astral</strong></p><p>La verdadera valentía también está en pedir ayuda cuando la necesitás.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Tu carisma natural está en su punto máximo. Las personas se sienten atraídas por tu energía magnética.</p><p><strong>Amor</strong></p><p>El romance florece en conversaciones profundas. Compartí tus sueños más audaces con quien te importa.</p><p><strong>Trabajo</strong></p><p>Liderazgo natural te destaca en reuniones. Tus decisiones rápidas resuelven problemas complejos.</p><p><strong>Consejo Astral</strong></p><p>Tu impulsividad es un don cuando la canalizás con sabiduría.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Las estrellas favorecen tu capacidad de acción. Hoy completarás tareas que otros consideraban imposibles.</p><p><strong>Amor</strong></p><p>Actividades compartidas fortalecen la conexión. Proponé un plan aventurero y diferente.</p><p><strong>Trabajo</strong></p><p>Tu eficiencia sorprende incluso a vos mismo. Aprovechá este pico de productividad.</p><p><strong>Consejo Astral</strong></p><p>El descanso no es debilidad. Incluso los guerreros más fuertes necesitan recargar energías.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Venus suaviza tus bordes. Hoy combinás perfectamente pasión con diplomacia.</p><p><strong>Amor</strong></p><p>Tu lado romántico emerge. Pequeños detalles demuestran amor más que grandes gestos.</p><p><strong>Trabajo</strong></p><p>La colaboración trae mejores resultados que la competencia. Trabajá en equipo.</p><p><strong>Consejo Astral</strong></p><p>La fuerza verdadera incluye la capacidad de ser gentil.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Júpiter expande tus horizontes. Pensá en grande pero actuá con estrategia.</p><p><strong>Amor</strong></p><p>La honestidad emocional profundiza relaciones. No temas mostrar vulnerabilidad.</p><p><strong>Trabajo</strong></p><p>Oportunidades de crecimiento aparecen. Arriesgate calculadamente en nuevos proyectos.</p><p><strong>Consejo Astral</strong></p><p>Tu entusiasmo inspira, pero asegurate de terminar lo que empezás.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Día perfecto para reflexión y planeamiento. Tu intuición está especialmente aguda.</p><p><strong>Amor</strong></p><p>Momentos de quietud compartida crean intimidad profunda. Disfrutá la calma juntos.</p><p><strong>Trabajo</strong></p><p>Revisá estrategias antes de lanzarte a la acción. La preparación garantiza éxito.</p><p><strong>Consejo Astral</strong></p><p>A veces el poder está en la pausa, no en el movimiento constante.</p>`
+            ],
+            
+            tauro: [
+                `<p><strong>Energía del Día</strong></p><p>Venus trae armonía y belleza a tu jornada. Todo lo que tocás hoy florece con gracia natural.</p><p><strong>Amor</strong></p><p>La sensualidad marca el día. Los pequeños placeres compartidos fortalecen vínculos profundos.</p><p><strong>Trabajo</strong></p><p>Tu enfoque práctico resuelve problemas complejos. Colegas valoran tu perspectiva realista.</p><p><strong>Consejo Astral</strong></p><p>La constancia es tu superpoder. Los resultados duraderos vienen de esfuerzos sostenidos.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>La Luna ilumina tus emociones. Confiá en lo que sentís, tu intuición no falla.</p><p><strong>Amor</strong></p><p>Gestos de cuidado hablan más que palabras. Demostrá afecto de formas tangibles.</p><p><strong>Trabajo</strong></p><p>Proyectos creativos prosperan. Tu ojo para la estética se traduce en resultados comerciales.</p><p><strong>Consejo Astral</strong></p><p>La paciencia que cultivás hoy se convierte en abundancia mañana.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Mercurio favorece decisiones financieras. Buen momento para revisar presupuestos e inversiones.</p><p><strong>Amor</strong></p><p>La lealtad que das será correspondida. Las relaciones estables te dan seguridad emocional.</p><p><strong>Trabajo</strong></p><p>Tu meticulosidad previene errores costosos. Sos el ancla de tu equipo.</p><p><strong>Consejo Astral</strong></p><p>No confundas terquedad con firmeza. Estar abierto al cambio es también una fortaleza.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Día perfecto para nutrir cuerpo y alma. Conectá con placeres simples y naturales.</p><p><strong>Amor</strong></p><p>Cocinar juntos o compartir una comida especial crea recuerdos hermosos.</p><p><strong>Trabajo</strong></p><p>Tu productividad constante impresiona. Seguí con tu ritmo, no te apresures.</p><p><strong>Consejo Astral</strong></p><p>Como el roble que crece lento pero firme, tus raíces profundas te sostienen en cualquier tormenta.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Las finanzas están favorecidas. Oportunidades de mejorar ingresos aparecen de formas inesperadas.</p><p><strong>Amor</strong></p><p>La estabilidad emocional que brindás es un tesoro. Tu pareja lo reconoce y aprecia.</p><p><strong>Trabajo</strong></p><p>Negociaciones salariales o contratos se resuelven a tu favor. Conocés tu valor.</p><p><strong>Consejo Astral</strong></p><p>El verdadero lujo está en la paz que cultivás, no en lo que poseés.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Tu conexión con la naturaleza te recarga. Pasá tiempo al aire libre si es posible.</p><p><strong>Amor</strong></p><p>La sensibilidad hacia las necesidades del otro fortalece la intimidad.</p><p><strong>Trabajo</strong></p><p>Proyectos relacionados con tierra, construcción o alimentación prosperan especialmente.</p><p><strong>Consejo Astral</strong></p><p>Tu jardín interior merece tanto cuidado como cualquier posesión material.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Día ideal para descanso y autoreflexión. Recargá baterías para la semana que viene.</p><p><strong>Amor</strong></p><p>Momentos tranquilos en casa crean conexión profunda. La comodidad compartida es romance.</p><p><strong>Trabajo</strong></p><p>Planificá la semana próxima con calma. Tu organización previa garantiza éxito futuro.</p><p><strong>Consejo Astral</strong></p><p>El descanso no es pereza, es inversión en tu bienestar a largo plazo.</p>`
+            ],
+            
+            géminis: [
+                `<p><strong>Energía del Día</strong></p><p>Mercurio activa tu mente brillante. Las ideas fluyen sin parar. Anotá todo antes de que se escapen.</p><p><strong>Amor</strong></p><p>Las palabras son tu mejor herramienta seductora. Conversaciones estimulantes crean conexión.</p><p><strong>Trabajo</strong></p><p>Tu versatilidad te permite manejar múltiples proyectos con gracia. Multitasking es tu zona.</p><p><strong>Consejo Astral</strong></p><p>Tu curiosidad es un regalo, pero no todas las puertas necesitan abrirse al mismo tiempo.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>La comunicación fluye naturalmente. Llamadas, mensajes y encuentros traen novedades positivas.</p><p><strong>Amor</strong></p><p>El humor y la complicidad renuevan la chispa. Reíte juntos de las pequeñas cosas.</p><p><strong>Trabajo</strong></p><p>Presentaciones, pitches y networking te favorecen especialmente. Brillás en público.</p><p><strong>Consejo Astral</strong></p><p>La profundidad a veces vale más que la amplitud. Elegí calidad sobre cantidad.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Tu mente necesita estímulos variados. Alternás tareas para mantener el interés alto.</p><p><strong>Amor</strong></p><p>Planes espontáneos y variados mantienen viva la relación. Sorprendé con algo diferente.</p><p><strong>Trabajo</strong></p><p>Proyectos que requieren investigación y análisis de múltiples fuentes te entusiasman.</p><p><strong>Consejo Astral</strong></p><p>Sos el mensajero de las estrellas. Tu mensaje más importante es el que te das a vos mismo.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Júpiter expande tu sed de conocimiento. Cursos, talleres o lecturas te atraen poderosamente.</p><p><strong>Amor</strong></p><p>Conversaciones filosóficas o intelectuales encienden tu corazón tanto como la pasión física.</p><p><strong>Trabajo</strong></p><p>Tu capacidad de adaptar el mensaje a cada audiencia es invaluable. Usala estratégicamente.</p><p><strong>Consejo Astral</strong></p><p>No todo lo que sabés necesita ser dicho. El silencio estratégico también es sabiduría.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Las conexiones sociales te energizan. Rodeate de personas que estimulen tu intelecto.</p><p><strong>Amor</strong></p><p>La amistad es la base de tu amor más duradero. Cultivá la conexión intelectual.</p><p><strong>Trabajo</strong></p><p>Colaboraciones y trabajo en red traen oportunidades inesperadas. Expandí contactos.</p><p><strong>Consejo Astral</strong></p><p>Tu don es conectar ideas y personas. Usá ese puente que construís para bien común.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Día ideal para escritura, comunicación digital o cualquier expresión verbal.</p><p><strong>Amor</strong></p><p>Un mensaje bien escrito puede decir más que mil conversaciones superficiales.</p><p><strong>Trabajo</strong></p><p>Proyectos de medios, marketing o tecnología avanzan favorablemente. Tu zona brillante.</p><p><strong>Consejo Astral</strong></p><p>Tu mente rápida es un tesoro. Dale también momentos de quietud para que procese todo lo que absorbe.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Necesitás equilibrar estimulación mental con descanso. Encontrá el balance hoy.</p><p><strong>Amor</strong></p><p>Escuchar es tan importante como hablar. Practicá la atención plena en la conversación.</p><p><strong>Trabajo</strong></p><p>Consolidá lo aprendido esta semana antes de lanzarte a nuevos proyectos.</p><p><strong>Consejo Astral</strong></p><p>Sos suficiente tal como sos. No necesitás saber todo para tener valor.</p>`
+            ],
+            
+            cáncer: [
+                `<p><strong>Energía del Día</strong></p><p>La Luna, tu regente, baila armoniosa. Tus emociones encuentran cauce creativo y sanador.</p><p><strong>Amor</strong></p><p>Tu sensibilidad emocional es tu superpoder. Demostrá afecto sin miedo a ser vulnerable.</p><p><strong>Trabajo</strong></p><p>Tu habilidad para leer ambientes te da ventaja en negociaciones y relaciones laborales.</p><p><strong>Consejo Astral</strong></p><p>Tu caparazón te protege, pero no dejes que se vuelva una prisión.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Venus ilumina tu hogar. Hoy es perfecto para renovaciones domésticas o reuniones familiares.</p><p><strong>Amor</strong></p><p>La intimidad emocional alcanza nuevas profundidades. Conversá desde el corazón.</p><p><strong>Trabajo</strong></p><p>Proyectos relacionados con hogar, familia o nutrición encuentran apoyo y recursos.</p><p><strong>Consejo Astral</strong></p><p>Como la Luna que gobierna tus mareas, tus fases son naturales. Honralas.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Tu intuición está especialmente aguda. Confiá en esos presentimientos que te llegan.</p><p><strong>Amor</strong></p><p>Sentís profundamente las necesidades del otro. Tu empatía cura heridas invisibles.</p><p><strong>Trabajo</strong></p><p>Tu creatividad nutre proyectos colectivos. Liderá desde la compasión, no desde el control.</p><p><strong>Consejo Astral</strong></p><p>Nutrirte a vos mismo es tan importante como cuidar a los demás.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Las aguas emocionales fluyen tranquilas. Aprovechá esta calma para sanar heridas pasadas.</p><p><strong>Amor</strong></p><p>La seguridad emocional que buscás empieza en tu propio corazón, no en el otro.</p><p><strong>Trabajo</strong></p><p>Tu memoria excepcional y atención a detalles emocionales te hacen invaluable para el equipo.</p><p><strong>Consejo Astral</strong></p><p>No hay nada malo en retirarte a tu concha cuando lo necesités. De ahí emergerás renovado.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Marte activa tu determinación. Defendé lo que amás con la ferocidad de quien protege su hogar.</p><p><strong>Amor</strong></p><p>Tu lealtad es inquebrantable. Las personas que te aman saben que pueden contar con vos siempre.</p><p><strong>Trabajo</strong></p><p>Proyectos que iniciaste con el corazón ahora muestran frutos tangibles.</p><p><strong>Consejo Astral</strong></p><p>Tu sensibilidad es fortaleza, no debilidad. El mundo necesita más corazones como el tuyo.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Conexión con agua te sana profundamente. Baños, natación o simplemente contemplar el mar.</p><p><strong>Amor</strong></p><p>Las emociones no expresadas buscan salida. Escribir o arte te ayuda a procesarlas.</p><p><strong>Trabajo</strong></p><p>Tu capacidad de crear ambientes acogedores mejora la moral del equipo notablemente.</p><p><strong>Consejo Astral</strong></p><p>Límites saludables no son egoísmo, son autocuidado necesario.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Día perfecto para nutrir tus raíces. Familia, tradiciones y recuerdos te alimentan el alma.</p><p><strong>Amor</strong></p><p>Cocinar para tus seres queridos es un acto de amor que todos aprecian profundamente.</p><p><strong>Trabajo</strong></p><p>Descansá sabiendo que tu esfuerzo constante ha construido bases sólidas.</p><p><strong>Consejo Astral</strong></p><p>De ahí emergerás renovado. Honrá tus ciclos naturales de energía y descanso.</p>`
+            ],
+            
+            leo: [
+                `<p><strong>Energía del Día</strong></p><p>El Sol, tu estrella regente, brilla con fuerza. Tu carisma es irresistible hoy.</p><p><strong>Amor</strong></p><p>Tu generosidad y pasión conquistan corazones. Dejá que tu luz brille sin filtros.</p><p><strong>Trabajo</strong></p><p>Tu liderazgo natural inspira al equipo. Proyectos creativos reciben luz verde.</p><p><strong>Consejo Astral</strong></p><p>Sos el rey de tu jungla, pero los mejores líderes sirven a su reino con humildad.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Marte activa tu valentía. Hoy enfrentarás desafíos con coraje de león.</p><p><strong>Amor</strong></p><p>Tu honestidad emocional es refrescante. No temas mostrar tu corazón vulnerable.</p><p><strong>Trabajo</strong></p><p>Presentaciones importantes tienen éxito asegurado. Tu confianza convence a todos.</p><p><strong>Consejo Astral</strong></p><p>La verdadera realeza está en elevar a otros, no solo en brillar solo.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Venus suaviza tus bordes. Hoy combinás fuerza con gracia de forma magistral.</p><p><strong>Amor</strong></p><p>El romance florece con gestos grandiosos pero también con detalles sutiles.</p><p><strong>Trabajo</strong></p><p>Tu creatividad se traduce en resultados concretos y valiosos para la empresa.</p><p><strong>Consejo Astral</strong></p><p>Tu luz se multiplica cuando la compartís generosamente con otros.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Júpiter expande tu visión. Pensá en grande, tu ambición está justificada.</p><p><strong>Amor</strong></p><p>Tu magnetismo personal está en máximo poder. Atraés admiración genuina.</p><p><strong>Trabajo</strong></p><p>Oportunidades de crecimiento y reconocimiento aparecen. Tomá tu lugar en el centro.</p><p><strong>Consejo Astral</strong></p><p>Como el Sol que ilumina a todos sin distinción, tu generosidad es tu corona verdadera.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Tu energía vital es contagiosa. Las personas se sienten mejor solo por estar cerca tuyo.</p><p><strong>Amor</strong></p><p>La lealtad que das es tu marca distintiva. Tu pareja se siente protegida y amada.</p><p><strong>Trabajo</strong></p><p>Proyectos artísticos o de entretenimiento prosperan bajo tu dirección creativa.</p><p><strong>Consejo Astral</strong></p><p>Tu talento para inspirar es un don. Usalo para levantar a quienes lo necesitan.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Día perfecto para celebrar tus logros. Reconocé tu propio valor sin falsa modestia.</p><p><strong>Amor</strong></p><p>Tu calidez y afecto hacen que otros se sientan especiales. Eso es tu magia.</p><p><strong>Trabajo</strong></p><p>Tu profesionalismo y estilo dejan huella duradera. Sos memorable en lo que hacés.</p><p><strong>Consejo Astral</strong></p><p>Brilla con orgullo, pero recordá que todos tenemos una luz única que ofrecer.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Necesitás equilibrar actividad con descanso. Incluso los leones duermen.</p><p><strong>Amor</strong></p><p>Momentos de quietud compartida profundizan la intimidad tanto como la pasión.</p><p><strong>Trabajo</strong></p><p>Recargá energías para la semana. Tu vitalidad es tu recurso más valioso.</p><p><strong>Consejo Astral</strong></p><p>El descanso no disminuye tu grandeza. Te prepara para brillar aún más fuerte.</p>`
+            ],
+            
+            virgo: [
+                `<p><strong>Energía del Día</strong></p><p>Mercurio favorece tu capacidad analítica. Verás soluciones donde otros ven caos.</p><p><strong>Amor</strong></p><p>Los gestos pequeños construyen grandes conexiones. Tu servicio amoroso habla volúmenes.</p><p><strong>Trabajo</strong></p><p>Tu eficiencia impresiona. Proyectos que requieren precisión te ponen en tu elemento.</p><p><strong>Consejo Astral</strong></p><p>Tu búsqueda de perfección es noble, pero la imperfección también tiene su belleza.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>La Luna nueva inaugura ciclos productivos. Plantá semillas de proyectos futuros hoy.</p><p><strong>Amor</strong></p><p>Mostrar amor a través de acciones concretas toca corazones más que palabras vacías.</p><p><strong>Trabajo</strong></p><p>Tu habilidad para resolver problemas complejos brilla especialmente hoy.</p><p><strong>Consejo Astral</strong></p><p>Servir a otros desde el amor, no la obligación, transforma el trabajo en misión.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Tu ojo para los detalles previene errores que otros pasarían por alto.</p><p><strong>Amor</strong></p><p>La comunicación práctica y sincera fortalece vínculos más que promesas grandiosas.</p><p><strong>Trabajo</strong></p><p>Optimización de procesos es tu zona de genio. Mejorá sistemas existentes.</p><p><strong>Consejo Astral</strong></p><p>Mejorás el mundo un detalle a la vez. Eso es tu don al universo.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Venus trae armonía a tu rutina diaria. El orden externo crea paz interna.</p><p><strong>Amor</strong></p><p>Tu capacidad de escuchar realmente es un regalo raro que tu pareja valora inmensamente.</p><p><strong>Trabajo</strong></p><p>Proyectos de salud, servicios o análisis de datos prosperan bajo tu dirección meticulosa.</p><p><strong>Consejo Astral</strong></p><p>La salud es riqueza. Cuidá tu cuerpo con la misma dedicación que das a tus proyectos.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Tu mente analítica encuentra patrones que revelan soluciones elegantes.</p><p><strong>Amor</strong></p><p>La consistencia en el afecto crea seguridad. Tu pareja sabe que puede contar con vos.</p><p><strong>Trabajo</strong></p><p>Tu profesionalismo impecable te hace indispensable. El reconocimiento vendrá.</p><p><strong>Consejo Astral</strong></p><p>No todo necesita ser perfecto para tener valor. A veces "suficientemente bueno" es suficiente.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Saturno recompensa tu disciplina pasada. Los frutos de tu trabajo constante maduran.</p><p><strong>Amor</strong></p><p>Tu lealtad inquebrantable es la base de relaciones duraderas y significativas.</p><p><strong>Trabajo</strong></p><p>Ascensos o reconocimientos llegan a quienes trabajan con tu nivel de excelencia.</p><p><strong>Consejo Astral</strong></p><p>Celebrá tus logros. Fuiste duro con vos mismo en el camino, ahora reconocé tu éxito.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Día ideal para descanso y recuperación. Tu cuerpo necesita la atención que das a todo lo demás.</p><p><strong>Amor</strong></p><p>Permitite recibir cuidado. No siempre tenés que ser quien sirve a otros.</p><p><strong>Trabajo</strong></p><p>Revisá y consolidá. No necesitás comenzar nada nuevo hoy.</p><p><strong>Consejo Astral</strong></p><p>El descanso es parte de la productividad, no su enemigo.</p>`
+            ],
+            
+            libra: [
+                `<p><strong>Energía del Día</strong></p><p>Venus, tu regente, baila con Júpiter. Belleza y abundancia te rodean.</p><p><strong>Amor</strong></p><p>Tu encanto natural magnetiza corazones. El romance florece en conversaciones refinadas.</p><p><strong>Trabajo</strong></p><p>Tu diplomacia resuelve conflictos. Proyectos colaborativos prosperan bajo tu coordinación.</p><p><strong>Consejo Astral</strong></p><p>Equilibrio no significa estancamiento. A veces necesitás inclinarte para aprender.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Mercurio favorece tu habilidad para mediar. Conectás personas y conceptos con gracia.</p><p><strong>Amor</strong></p><p>La belleza de compartir se revela en momentos simples. Disfrutá la compañía.</p><p><strong>Trabajo</strong></p><p>Tu visión estética encuentra aplicación lucrativa. Proyectos de diseño avanzan.</p><p><strong>Consejo Astral</strong></p><p>No sacrifiques tu verdad por complacer. La paz verdadera incluye tus necesidades.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Las relaciones son tu espejo. Hoy aprendés algo importante sobre vos a través de otros.</p><p><strong>Amor</strong></p><p>La reciprocidad que buscás empieza cuando das desde la autenticidad, no la obligación.</p><p><strong>Trabajo</strong></p><p>Sociedades comerciales se fortalecen. Tu toque diplomático cierra acuerdos beneficiosos.</p><p><strong>Consejo Astral</strong></p><p>La armonía externa es hermosa, pero la paz interior es esencial.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Venus te envuelve en su gracia. Todo lo que hacés hoy tiene un toque de elegancia.</p><p><strong>Amor</strong></p><p>Tu capacidad de ver belleza en otros hace que se sientan valorados profundamente.</p><p><strong>Trabajo</strong></p><p>Proyectos de moda, arte o decoración reciben reconocimiento merecido.</p><p><strong>Consejo Astral</strong></p><p>La belleza que creás en el mundo empieza con la belleza que reconocés en vos.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Júpiter expande tus conexiones sociales. Networking y eventos sociales te favorecen.</p><p><strong>Amor</strong></p><p>La amistad es la base de tu amor más duradero. Cultivá conexión intelectual.</p><p><strong>Trabajo</strong></p><p>Tu habilidad para crear consenso es invaluable en reuniones importantes.</p><p><strong>Consejo Astral</strong></p><p>Sos el puente entre personas. Ese don de unir es tu contribución única.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Las decisiones fluyen con facilidad. Tu capacidad de ver múltiples perspectivas te guía.</p><p><strong>Amor</strong></p><p>El equilibrio entre dar y recibir se encuentra naturalmente hoy.</p><p><strong>Trabajo</strong></p><p>Presentaciones y propuestas tienen éxito cuando mostrás ambos lados con equidad.</p><p><strong>Consejo Astral</strong></p><p>No todos los lados tienen el mismo peso. A veces la justicia requiere desequilibrio.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Día perfecto para cultivar belleza en tu espacio personal. El orden externo crea paz interna.</p><p><strong>Amor</strong></p><p>Momentos estéticos compartidos - arte, música, naturaleza - profundizan la conexión.</p><p><strong>Trabajo</strong></p><p>Descansá en la armonía que creaste durante la semana.</p><p><strong>Consejo Astral</strong></p><p>La paz verdadera nace cuando todos tus lados están en la mesa de negociación.</p>`
+            ],
+            
+            escorpio: [
+                `<p><strong>Energía del Día</strong></p><p>Plutón activa misterios profundos. Tu intuición psíquica está en máxima potencia.</p><p><strong>Amor</strong></p><p>La intensidad emocional alcanza nuevas profundidades. Tu magnetismo es irresistible.</p><p><strong>Trabajo</strong></p><p>Tu capacidad investigativa descubre oportunidades ocultas que otros no ven.</p><p><strong>Consejo Astral</strong></p><p>Tu poder de transformación es como el fénix. Pero no todo necesita morir para renacer.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Marte enciende tu pasión y determinación. Lo que decidás transformar hoy, se transformará.</p><p><strong>Amor</strong></p><p>La vulnerabilidad auténtica es tu puerta a la intimidad verdadera. Dejate ver.</p><p><strong>Trabajo</strong></p><p>Tu estrategia a largo plazo muestra resultados. Tu paciencia calculada da frutos.</p><p><strong>Consejo Astral</strong></p><p>Tu profundidad es necesaria en un mundo superficial. Seguí buceando hondo.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Los secretos se revelan. Tu habilidad para leer entre líneas te da ventaja.</p><p><strong>Amor</strong></p><p>La confianza se construye cuando mostrás tu lado vulnerable sin máscaras.</p><p><strong>Trabajo</strong></p><p>Proyectos de investigación, psicología o finanzas avanzan significativamente.</p><p><strong>Consejo Astral</strong></p><p>El verdadero poder está en saber cuándo usarlo y cuándo guardarlo.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Venus suaviza tu intensidad. Hoy podés ser profundo sin ser abrumador.</p><p><strong>Amor</strong></p><p>Tu lealtad inquebrantable es el fundamento de relaciones duraderas.</p><p><strong>Trabajo</strong></p><p>Negociaciones complejas se resuelven cuando mostrás tu lado humano.</p><p><strong>Consejo Astral</strong></p><p>No todos temen tu intensidad. Las almas valientes te buscan justamente por ella.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>La Luna llena ilumina tu casa de transformación. Cambios profundos están en marcha.</p><p><strong>Amor</strong></p><p>La pasión emocional y física se entrelazan creando conexiones inolvidables.</p><p><strong>Trabajo</strong></p><p>Tu olfato para detectar lo valioso bajo la superficie es tu mayor activo.</p><p><strong>Consejo Astral</strong></p><p>Emergé a respirar de vez en cuando. Incluso los buceadores necesitan superficie.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Saturno estructura tu poder personal. La disciplina amplifica tu fuerza natural.</p><p><strong>Amor</strong></p><p>Tu capacidad de comprometerte completamente inspira la misma intensidad en otros.</p><p><strong>Trabajo</strong></p><p>Proyectos que requieren investigación profunda revelan tesoros escondidos.</p><p><strong>Consejo Astral</strong></p><p>Tu capacidad de renacer de las cenizas es tu superpoder. Confiá en tu resiliencia.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Día perfecto para prácticas de transmutación energética. Transformá dolor en poder.</p><p><strong>Amor</strong></p><p>El silencio compartido puede ser tan íntimo como la conversación profunda.</p><p><strong>Trabajo</strong></p><p>Descansá sabiendo que tu trabajo en las sombras eventualmente verá la luz.</p><p><strong>Consejo Astral</strong></p><p>Tu intensidad es un don. El mundo necesita quienes se atrevan a sentir profundo.</p>`
+            ],
+            
+            sagitario: [
+                `<p><strong>Energía del Día</strong></p><p>Júpiter abre horizontes ilimitados. Las oportunidades están en todas partes.</p><p><strong>Amor</strong></p><p>Tu espíritu libre y optimista es magnético. La honestidad es tu afrodisíaco.</p><p><strong>Trabajo</strong></p><p>Tu visión amplia identifica oportunidades que otros no ven. Pensá en grande.</p><p><strong>Consejo Astral</strong></p><p>Cada paso del viaje es tan importante como el destino. Disfrutá el camino.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>El Sol ilumina tu búsqueda de verdad y significado. Hoy encontrás respuestas importantes.</p><p><strong>Amor</strong></p><p>La libertad y el compromiso encuentran balance. Tu autenticidad atrae almas valientes.</p><p><strong>Trabajo</strong></p><p>Oportunidades de enseñanza, publicación o viajes laborales aparecen favorablemente.</p><p><strong>Consejo Astral</strong></p><p>Sos el filósofo del zodíaco. Pero las verdades profundas también están en lo simple.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Marte impulsa tus aventuras. Hoy es perfecto para explorar territorios nuevos.</p><p><strong>Amor</strong></p><p>Planes aventureros compartidos fortalecen vínculos más que la rutina cómoda.</p><p><strong>Trabajo</strong></p><p>Proyectos internacionales o educativos reciben luz verde. Expandí horizontes.</p><p><strong>Consejo Astral</strong></p><p>Tu entusiasmo inspirador motiva a otros. Compartí tu visión optimista del futuro.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Mercurio favorece tu comunicación. Tus palabras inspiran y educan simultáneamente.</p><p><strong>Amor</strong></p><p>Conversaciones filosóficas o sobre el sentido de la vida encienden tu corazón.</p><p><strong>Trabajo</strong></p><p>Tu capacidad de ver el panorama completo te hace estratega invaluable.</p><p><strong>Consejo Astral</strong></p><p>La fe que tenés en el futuro crea el futuro en el que creés.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Júpiter expande tu red de contactos. Conocés personas que amplían tu perspectiva.</p><p><strong>Amor</strong></p><p>Tu honestidad brutal es refrescante para quienes valoran la autenticidad sobre la cortesía.</p><p><strong>Trabajo</strong></p><p>Oportunidades de crecimiento profesional aparecen a través de conexiones internacionales.</p><p><strong>Consejo Astral</strong></p><p>Tu flecha apunta siempre hacia horizontes lejanos. Recordá apreciar donde estás ahora.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Venus suaviza tu franqueza. Hoy podés ser honesto sin ser hiriente.</p><p><strong>Amor</strong></p><p>Tu optimismo contagioso levanta el ánimo de quienes te rodean.</p><p><strong>Trabajo</strong></p><p>Proyectos creativos o de entretenimiento se benefician de tu entusiasmo natural.</p><p><strong>Consejo Astral</strong></p><p>La sabiduría está tanto en el camino como en la meta final.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Día perfecto para reflexionar sobre aventuras pasadas y planear futuras.</p><p><strong>Amor</strong></p><p>Compartir sueños y planes futuros crea intimidad profunda.</p><p><strong>Trabajo</strong></p><p>Descansá sabiendo que tu visión optimista plantó semillas que florecerán.</p><p><strong>Consejo Astral</strong></p><p>No necesitás estar siempre en movimiento para estar vivo. La quietud también es aventura.</p>`
+            ],
+            
+            capricornio: [
+                `<p><strong>Energía del Día</strong></p><p>Saturno recompensa tu disciplina pasada. Verás resultados tangibles de tu trabajo arduo.</p><p><strong>Amor</strong></p><p>La lealtad y el compromiso son tus fortalezas. Tu seriedad emocional atrae almas maduras.</p><p><strong>Trabajo</strong></p><p>Tu estrategia de largo plazo muestra frutos. El profesionalismo abre puertas.</p><p><strong>Consejo Astral</strong></p><p>Celebrá cada escalón, no solo la cima final. El viaje merece reconocimiento.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Plutón transita trayendo transformación. Lo viejo se desmorona para estructuras más auténticas.</p><p><strong>Amor</strong></p><p>La vulnerabilidad controlada fortalece vínculos. Mostrar tu lado sensible es valentía.</p><p><strong>Trabajo</strong></p><p>Tu maestría técnica y visión estratégica te distinguen de la competencia.</p><p><strong>Consejo Astral</strong></p><p>Los mejores cimientos se construyen con piedra, amor y significado juntos.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Marte activa tu ambición. Hoy alcanzarás metas que parecían distantes.</p><p><strong>Amor</strong></p><p>Tu capacidad de proveer seguridad es un regalo que tu pareja valora inmensamente.</p><p><strong>Trabajo</strong></p><p>Oportunidades de posiciones de autoridad aparecen. Estás listo para más responsabilidad.</p><p><strong>Consejo Astral</strong></p><p>El éxito sin satisfacción es vacío. Asegurate de disfrutar lo que construís.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Venus suaviza tu seriedad. Hoy equilibrás perfectamente ambición con disfrute.</p><p><strong>Amor</strong></p><p>Pequeños gestos de afecto rompen tu imagen de dureza y revelan tu corazón.</p><p><strong>Trabajo</strong></p><p>Tu reputación profesional te precede. Las oportunidades te buscan a vos.</p><p><strong>Consejo Astral</strong></p><p>La cima de la montaña es hermosa, pero el valle también tiene su belleza.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Júpiter expande tus recursos. Inversiones conservadoras pero sólidas prosperan.</p><p><strong>Amor</strong></p><p>Tu consistencia crea seguridad. Tu pareja sabe que tus promesas son sólidas.</p><p><strong>Trabajo</strong></p><p>Contratos importantes se firman favorablemente. Tu preparación garantiza éxito.</p><p><strong>Consejo Astral</strong></p><p>Construís legados duraderos. Esa es tu contribución única al mundo.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Mercurio favorece planificación estratégica. Organizá los próximos pasos con claridad.</p><p><strong>Amor</strong></p><p>Planes a largo plazo con tu pareja solidifican la relación.</p><p><strong>Trabajo</strong></p><p>Tu capacidad de gestión y organización previene crisis antes de que ocurran.</p><p><strong>Consejo Astral</strong></p><p>La paciencia que practicás hoy construye el imperio de mañana.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Día perfecto para descanso bien merecido. Hasta las montañas necesitan quietud.</p><p><strong>Amor</strong></p><p>Momentos de relajación compartida revelan un lado tuyo que pocos conocen.</p><p><strong>Trabajo</strong></p><p>Descansá sabiendo que tu trabajo constante ha construido bases inquebrantables.</p><p><strong>Consejo Astral</strong></p><p>El descanso no es perder tiempo. Es invertir en tu capacidad futura.</p>`
+            ],
+            
+            acuario: [
+                `<p><strong>Energía del Día</strong></p><p>Urano activa innovación brillante. Tu genio visionario encuentra expresión perfecta.</p><p><strong>Amor</strong></p><p>La libertad dentro del compromiso es posible. Tu originalidad atrae almas únicas.</p><p><strong>Trabajo</strong></p><p>Tu pensamiento innovador revoluciona proyectos estancados. Ideas disruptivas prosperan.</p><p><strong>Consejo Astral</strong></p><p>Sos el portador de agua de sabiduría. La paciencia con otros también es evolución.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Mercurio favorece tu casa de comunidad. Tu tribu te llama y tu contribución se amplifica.</p><p><strong>Amor</strong></p><p>La amistad es la base de tu amor. Conexiones intelectuales encienden pasión emocional.</p><p><strong>Trabajo</strong></p><p>Proyectos grupales o redes sociales prosperan. La abundancia llega cuando servís al colectivo.</p><p><strong>Consejo Astral</strong></p><p>El cambio verdadero comienza con actos de rebeldía compasiva hoy, no solo mañana.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Saturno estructura tu visión futurista. Hoy convertís sueños en planes concretos.</p><p><strong>Amor</strong></p><p>Tu autenticidad excéntrica es tu mayor atractivo. Los que te aman, te aman completo.</p><p><strong>Trabajo</strong></p><p>Oportunidades en tecnología, ciencia o causas sociales abren nuevas puertas.</p><p><strong>Consejo Astral</strong></p><p>Tu visión del futuro es un regalo. Compartila sin esperar que todos la entiendan ya.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Venus humaniza tu lado tecnológico. Hoy conectás con personas a nivel humano profundo.</p><p><strong>Amor</strong></p><p>Tu capacidad de ver el potencial en otros los hace sentir comprendidos únicamente.</p><p><strong>Trabajo</strong></p><p>Iniciativas comunitarias o humanitarias reciben apoyo inesperado.</p><p><strong>Consejo Astral</strong></p><p>La revolución que buscás empieza con revolucionar tu propia vida primero.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Júpiter expande tu red de influencia. Conocés personas que comparten tu visión.</p><p><strong>Amor</strong></p><p>Tu necesidad de espacio personal es respetada por quienes realmente te aman.</p><p><strong>Trabajo</strong></p><p>Colaboraciones con mentes brillantes generan ideas que cambiarán paradigmas.</p><p><strong>Consejo Astral</strong></p><p>No estás solo en tu visión. Tu tribu existe, solo tenés que encontrarla.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Marte activa tu lado activista. Hoy lucharás por causas que importan.</p><p><strong>Amor</strong></p><p>Tu pareja admira tu compromiso con hacer del mundo un lugar mejor.</p><p><strong>Trabajo</strong></p><p>Proyectos que benefician a la humanidad reciben recursos y reconocimiento.</p><p><strong>Consejo Astral</strong></p><p>Tu rebeldía es necesaria. El mundo necesita quienes cuestionen el status quo.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Día perfecto para recargar baterías mentales. Desconectá de la tecnología paradójicamente.</p><p><strong>Amor</strong></p><p>Momentos offline con seres queridos renuevan tu humanidad.</p><p><strong>Trabajo</strong></p><p>Descansá sabiendo que tus ideas innovadoras ya están plantando semillas de futuro.</p><p><strong>Consejo Astral</strong></p><p>Incluso los revolucionarios necesitan descanso. Tu visión estará más clara después.</p>`
+            ],
+            
+            piscis: [
+                `<p><strong>Energía del Día</strong></p><p>Neptuno disuelve fronteras. Tu intuición psíquica alcanza niveles extraordinarios.</p><p><strong>Amor</strong></p><p>La compasión y empatía son tus lenguajes de amor. Sentís profundamente las almas.</p><p><strong>Trabajo</strong></p><p>Tu creatividad artística o sanadora encuentra valoración material merecida.</p><p><strong>Consejo Astral</strong></p><p>Los sueños más bellos necesitan pies para caminar. Anclalos en la realidad.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Venus danza en tu casa de espiritualidad. El amor universal fluye a través tuyo.</p><p><strong>Amor</strong></p><p>Tu capacidad de amor incondicional crea espacios seguros para que otros se abran.</p><p><strong>Trabajo</strong></p><p>Proyectos creativos, cinematográficos o de ayuda humanitaria florecen naturalmente.</p><p><strong>Consejo Astral</strong></p><p>Tu encarnación en este mundo también es sagrada. Tu cuerpo es el templo del espíritu.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>La Luna amplifica tu sensibilidad. Los sueños traen mensajes importantes, escuchalos.</p><p><strong>Amor</strong></p><p>La fusión emocional alcanza dimensiones espirituales. La intimidad trasciende lo físico.</p><p><strong>Trabajo</strong></p><p>Tu imaginación sin límites genera ideas que otros considerarían imposibles.</p><p><strong>Consejo Astral</strong></p><p>Nadás en océanos infinitos. Recordá emerger a respirar de vez en cuando.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Júpiter expande tu compasión. Hoy tu capacidad de sanación alcanza a muchos.</p><p><strong>Amor</strong></p><p>Tu capacidad de perdonar y comprender cura heridas que otros ni siquiera ven.</p><p><strong>Trabajo</strong></p><p>Proyectos relacionados con música, arte, espiritualidad o salud mental prosperan.</p><p><strong>Consejo Astral</strong></p><p>Tu sensibilidad extrema es un don, no una carga. El mundo necesita tu empatía.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Saturno te ayuda a establecer límites saludables. Protegé tu energía sensible.</p><p><strong>Amor</strong></p><p>Decir "no" cuando es necesario también es un acto de amor propio.</p><p><strong>Trabajo</strong></p><p>Tu visión artística se traduce en resultados tangibles cuando te enfocás.</p><p><strong>Consejo Astral</strong></p><p>Los límites no te separan de otros, te permiten dar desde un lugar más sano.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Marte te da coraje para defender tus sueños. Tu lado guerrero emerge cuando es necesario.</p><p><strong>Amor</strong></p><p>Tu devoción emocional inspira la misma profundidad en quienes te aman.</p><p><strong>Trabajo</strong></p><p>Confía en que el universo provee cuando seguís tu llamado creativo auténtico.</p><p><strong>Consejo Astral</strong></p><p>Sos fuerte de maneras que el mundo no siempre reconoce. Tu fuerza está en la flexibilidad.</p>`,
+                
+                `<p><strong>Energía del Día</strong></p><p>Día perfecto para prácticas espirituales. Meditación, retiro o simplemente estar en silencio.</p><p><strong>Amor</strong></p><p>El silencio compartido puede ser la forma más profunda de comunicación.</p><p><strong>Trabajo</strong></p><p>Descansá sabiendo que tu trabajo invisible también tiene valor inmenso.</p><p><strong>Consejo Astral</strong></p><p>Tu conexión con lo divino te guía. Confiá en el flujo de la vida.</p>`
+            ]
+        };
+
+        // Get day number to rotate horoscopes daily
+        function getDayNumber() {
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 0);
+            const diff = now - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            return Math.floor(diff / oneDay);
+        }
+
+        function createStars() {
+            const starfield = document.getElementById('starfield');
+            const numberOfStars = 200;
+            
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 2 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                starfield.appendChild(star);
+            }
+        }
+
+        function createShootingStar() {
+            const star = document.createElement('div');
+            star.className = 'shooting-star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 50 + '%';
+            document.body.appendChild(star);
+            
+            setTimeout(() => star.remove(), 3000);
+        }
+
+        function displayDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const today = new Date().toLocaleDateString('es-AR', options);
+            document.getElementById('currentDate').textContent = today.charAt(0).toUpperCase() + today.slice(1);
+        }
+
+        function getHoroscope(sign, icon) {
+            const display = document.getElementById('horoscopeDisplay');
+            const content = document.getElementById('horoscopeContent');
+            const selectedSign = document.getElementById('selectedSign');
+            const selectedIcon = document.getElementById('selectedIcon');
+
+            selectedSign.textContent = sign.charAt(0).toUpperCase() + sign.slice(1);
+            selectedIcon.textContent = icon;
+            display.classList.add('active');
+
+            // Get horoscope variation based on day number (0-6 for each day of week)
+            const dayNum = getDayNumber();
+            const horoscopeArray = horoscopes[sign];
+            const variationIndex = dayNum % horoscopeArray.length;
+            
+            content.innerHTML = horoscopeArray[variationIndex];
+            
+            // Smooth scroll to horoscope
+            display.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Initialize
+        createStars();
+        displayDate();
+        setInterval(createShootingStar, 5000);
+    </script>
+</body>
+</html>
