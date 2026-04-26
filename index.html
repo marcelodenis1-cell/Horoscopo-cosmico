@@ -13,7 +13,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+ 
         :root {
             --deep-space: #0a0e27;
             --cosmic-purple: #1a0f2e;
@@ -23,7 +23,7 @@
             --celestial-cyan: #64b5f6;
             --moon-silver: #c8d6e5;
         }
-
+ 
         body {
             font-family: 'Cormorant Garamond', serif;
             background: var(--deep-space);
@@ -32,7 +32,7 @@
             overflow-x: hidden;
             position: relative;
         }
-
+ 
         .stars {
             position: fixed;
             top: 0;
@@ -42,24 +42,24 @@
             pointer-events: none;
             z-index: 0;
         }
-
+ 
         .star {
             position: absolute;
             background: white;
             border-radius: 50%;
             animation: twinkle 3s infinite;
         }
-
+ 
         @keyframes twinkle {
             0%, 100% { opacity: 0.3; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.2); }
         }
-
+ 
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-20px); }
         }
-
+ 
         .container {
             position: relative;
             z-index: 1;
@@ -67,13 +67,13 @@
             margin: 0 auto;
             padding: 2rem;
         }
-
+ 
         header {
             text-align: center;
             padding: 3rem 0 2rem;
             animation: fadeInDown 1s ease-out;
         }
-
+ 
         @keyframes fadeInDown {
             from {
                 opacity: 0;
@@ -84,7 +84,7 @@
                 transform: translateY(0);
             }
         }
-
+ 
         h1 {
             font-family: 'Cinzel', serif;
             font-size: clamp(2rem, 5vw, 3.5rem);
@@ -97,7 +97,7 @@
             letter-spacing: 3px;
             text-transform: uppercase;
         }
-
+ 
         .subtitle {
             font-size: 1.2rem;
             color: var(--moon-silver);
@@ -105,7 +105,18 @@
             font-style: italic;
             letter-spacing: 1px;
         }
-
+ 
+        .brand {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--star-gold);
+            margin-top: 0.5rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+ 
         .date-display {
             text-align: center;
             font-size: 1.1rem;
@@ -116,12 +127,12 @@
             border-radius: 10px;
             animation: fadeIn 1s ease-out 0.3s both;
         }
-
+ 
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
-
+ 
         .zodiac-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -129,7 +140,7 @@
             margin: 3rem 0;
             animation: fadeIn 1s ease-out 0.6s both;
         }
-
+ 
         .zodiac-card {
             background: linear-gradient(135deg, rgba(26, 15, 46, 0.6), rgba(22, 36, 71, 0.4));
             border: 2px solid transparent;
@@ -141,7 +152,7 @@
             position: relative;
             overflow: hidden;
         }
-
+ 
         .zodiac-card::before {
             content: '';
             position: absolute;
@@ -153,24 +164,24 @@
             opacity: 0;
             transition: opacity 0.4s;
         }
-
+ 
         .zodiac-card:hover::before {
             opacity: 1;
         }
-
+ 
         .zodiac-card:hover {
             transform: translateY(-8px) scale(1.05);
             border-color: var(--celestial-cyan);
             box-shadow: 0 10px 40px rgba(100, 181, 246, 0.3);
         }
-
+ 
         .zodiac-icon {
             font-size: 3rem;
             margin-bottom: 0.5rem;
             filter: drop-shadow(0 0 10px rgba(244, 208, 63, 0.5));
             animation: float 3s ease-in-out infinite;
         }
-
+ 
         .zodiac-name {
             font-family: 'Cinzel', serif;
             font-size: 1.1rem;
@@ -179,14 +190,14 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-
+ 
         .zodiac-dates {
             font-size: 0.85rem;
             color: var(--moon-silver);
             opacity: 0.7;
             margin-top: 0.3rem;
         }
-
+ 
         .horoscope-display {
             background: linear-gradient(135deg, rgba(26, 15, 46, 0.8), rgba(22, 36, 71, 0.6));
             border: 2px solid var(--mystic-violet);
@@ -198,7 +209,7 @@
             animation: slideUp 0.6s ease-out;
             box-shadow: 0 20px 60px rgba(155, 89, 182, 0.3);
         }
-
+ 
         @keyframes slideUp {
             from {
                 opacity: 0;
@@ -209,11 +220,11 @@
                 transform: translateY(0);
             }
         }
-
+ 
         .horoscope-display.active {
             display: block;
         }
-
+ 
         .horoscope-header {
             display: flex;
             align-items: center;
@@ -222,12 +233,12 @@
             padding-bottom: 1rem;
             border-bottom: 1px solid rgba(100, 181, 246, 0.3);
         }
-
+ 
         .horoscope-icon {
             font-size: 3rem;
             filter: drop-shadow(0 0 15px rgba(244, 208, 63, 0.6));
         }
-
+ 
         .horoscope-title {
             font-family: 'Cinzel', serif;
             font-size: 2rem;
@@ -235,13 +246,13 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
-
+ 
         .horoscope-content {
             font-size: 1.15rem;
             line-height: 1.8;
             color: var(--moon-silver);
         }
-
+ 
         .horoscope-content strong {
             color: var(--star-gold);
             font-family: 'Cinzel', serif;
@@ -251,11 +262,11 @@
             margin-bottom: 0.4rem;
             letter-spacing: 1px;
         }
-
+ 
         .horoscope-content p {
             margin-bottom: 0.8rem;
         }
-
+ 
         .shooting-star {
             position: fixed;
             width: 2px;
@@ -265,7 +276,7 @@
             animation: shoot 3s linear;
             opacity: 0;
         }
-
+ 
         @keyframes shoot {
             0% {
                 opacity: 1;
@@ -276,7 +287,7 @@
                 transform: translateX(-300px) translateY(300px);
             }
         }
-
+ 
         footer {
             text-align: center;
             padding: 3rem 0 2rem;
@@ -285,7 +296,7 @@
             opacity: 0.6;
             font-size: 0.9rem;
         }
-
+ 
         @media (max-width: 768px) {
             .zodiac-grid {
                 grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -300,17 +311,18 @@
 </head>
 <body>
     <div class="stars" id="starfield"></div>
-
+ 
     <div class="container">
         <header>
             <h1>✧ Horóscopo Cósmico ✧</h1>
+            <p class="brand">VM Aromas</p>
             <p class="subtitle">Revelaciones astrales para cada día</p>
         </header>
-
+ 
         <div class="date-display">
             <span id="currentDate"></span>
         </div>
-
+ 
         <div class="zodiac-grid">
             <div class="zodiac-card" onclick="getHoroscope('aries', '♈')">
                 <div class="zodiac-icon">♈</div>
@@ -373,7 +385,7 @@
                 <div class="zodiac-dates">19 Feb - 20 Mar</div>
             </div>
         </div>
-
+ 
         <div class="horoscope-display" id="horoscopeDisplay">
             <div class="horoscope-header">
                 <div class="horoscope-icon" id="selectedIcon"></div>
@@ -381,12 +393,12 @@
             </div>
             <div class="horoscope-content" id="horoscopeContent"></div>
         </div>
-
+ 
         <footer>
             ✨ Las estrellas revelan sus secretos cada día ✨
         </footer>
     </div>
-
+ 
     <script>
         // Horoscopes database - 7 variations per sign (one for each day of week)
         const horoscopes = {
@@ -582,7 +594,7 @@
                 `<p><strong>Energía del Día</strong></p><p>Día perfecto para prácticas espirituales. Meditación, retiro o simplemente estar en silencio.</p><p><strong>Amor</strong></p><p>El silencio compartido puede ser la forma más profunda de comunicación.</p><p><strong>Trabajo</strong></p><p>Descansá sabiendo que tu trabajo invisible también tiene valor inmenso.</p><p><strong>Consejo Astral</strong></p><p>Tu conexión con lo divino te guía. Confiá en el flujo de la vida.</p>`
             ]
         };
-
+ 
         // Get day number to rotate horoscopes daily
         function getDayNumber() {
             const now = new Date();
@@ -591,7 +603,7 @@
             const oneDay = 1000 * 60 * 60 * 24;
             return Math.floor(diff / oneDay);
         }
-
+ 
         function createStars() {
             const starfield = document.getElementById('starfield');
             const numberOfStars = 200;
@@ -608,7 +620,7 @@
                 starfield.appendChild(star);
             }
         }
-
+ 
         function createShootingStar() {
             const star = document.createElement('div');
             star.className = 'shooting-star';
@@ -618,23 +630,23 @@
             
             setTimeout(() => star.remove(), 3000);
         }
-
+ 
         function displayDate() {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const today = new Date().toLocaleDateString('es-AR', options);
             document.getElementById('currentDate').textContent = today.charAt(0).toUpperCase() + today.slice(1);
         }
-
+ 
         function getHoroscope(sign, icon) {
             const display = document.getElementById('horoscopeDisplay');
             const content = document.getElementById('horoscopeContent');
             const selectedSign = document.getElementById('selectedSign');
             const selectedIcon = document.getElementById('selectedIcon');
-
+ 
             selectedSign.textContent = sign.charAt(0).toUpperCase() + sign.slice(1);
             selectedIcon.textContent = icon;
             display.classList.add('active');
-
+ 
             // Get horoscope variation based on day number (0-6 for each day of week)
             const dayNum = getDayNumber();
             const horoscopeArray = horoscopes[sign];
@@ -645,7 +657,7 @@
             // Smooth scroll to horoscope
             display.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-
+ 
         // Initialize
         createStars();
         displayDate();
